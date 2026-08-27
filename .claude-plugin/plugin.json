@@ -1,0 +1,11 @@
+{
+  "name": "compact-handoff",
+  "displayName": "Compact Handoff",
+  "description": "Never lose state to a context compaction: writes a mechanical handoff at the moment of compaction, asks the agent for a reasoned one at turn boundaries, and points the agent back at both afterwards.",
+  "version": "0.1.0",
+  "author": { "name": "tmastalirsch" },
+  "homepage": "https://github.com/tmastalirsch/claude-compact-handoff",
+  "repository": "https://github.com/tmastalirsch/claude-compact-handoff",
+  "license": "MIT",
+  "keywords": ["context-window", "compaction", "handoff", "hooks", "session-state"]
+}

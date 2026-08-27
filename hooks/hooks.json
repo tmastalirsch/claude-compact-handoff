@@ -1,0 +1,20 @@
+{
+  "hooks": {
+    "PreCompact": [
+      { "matcher": "*", "hooks": [
+        { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-compact.sh\"", "timeout": 15 } ] }
+    ],
+    "UserPromptSubmit": [
+      { "matcher": "*", "hooks": [
+        { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/prompt-check.sh\"", "timeout": 10 } ] }
+    ],
+    "Stop": [
+      { "matcher": "*", "hooks": [
+        { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/turn-end.sh\"", "timeout": 10 } ] }
+    ],
+    "SessionStart": [
+      { "matcher": "*", "hooks": [
+        { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/after-compact.sh\"", "timeout": 10 } ] }
+    ]
+  }
+}
