@@ -51,6 +51,11 @@ Verify the manifest at any time with:
 claude plugin validate /path/to/claude-compact-handoff
 ```
 
+**Before you enable it, set `HANDOFF_TOKEN_THRESHOLD` for your context window.** The
+default of 150000 tokens suits a 200k window. On a 1M window it fires within the first
+hour of work and will keep asking for handoffs — set it to around `750000` instead. See
+[Configuration](#configuration).
+
 ## Configuration
 
 Environment variables, e.g. in the `env` block of `~/.claude/settings.json`.
