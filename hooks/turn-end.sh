@@ -27,5 +27,5 @@ now="$(date +%s)"
 [[ "$(needs_note "$used" "$HANDOFF_TOKEN_THRESHOLD" "$note_ts" "$note_used" \
       "$now" "$HANDOFF_MAX_AGE" "$HANDOFF_MAX_DRIFT")" == yes ]] || exit 0
 
-emit_block "Context is at $(fmt_tokens "$used") with no fresh handoff on disk. Before finishing, write one to $dir/$now-agent-$used.md — use the compact-handoff skill for the structure. Keep the file name exactly as given: the timestamp and token count in it are how the plugin knows the note is current."
+emit_block "compact-handoff: this is a routine request, not a failure — Claude Code labels every Stop hook message as an error. Context is at $(fmt_tokens "$used") with no fresh handoff on disk. Before finishing, write one to $dir/$now-agent-$used.md, using the compact-handoff skill for the structure. Keep the file name exactly as given: the timestamp and token count in it are how the plugin knows the note is current."
 exit 0

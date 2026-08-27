@@ -21,6 +21,17 @@ file="$dir/$now-auto-$used.md"
 
 branch="$(git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null)"
 [[ -n "$branch" ]] || branch="(not a git repository)"
+
+# A worktree gets its own note directory, keyed by its own path — parallel worktrees
+# are parallel work, and mixing their handoffs would make a stale one look fresh.
+# The note names the main repo so the file is not orphaned when the worktree goes.
+main_repo=""
+common="$(git -C "$CWD" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+top="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
+if [[ -n "$common" && -n "$top" ]]; then
+  candidate="$(dirname "$common")"
+  [[ "$candidate" != "$top" ]] && main_repo="$candidate"
+fi
 status="$(git -C "$CWD" status --porcelain 2>/dev/null | cap_lines "$HANDOFF_MAX_FILES")"
 diffstat="$(git -C "$CWD" diff --stat 2>/dev/null | cap_lines "$HANDOFF_MAX_FILES")"
 
@@ -31,6 +42,7 @@ diffstat="$(git -C "$CWD" diff --stat 2>/dev/null | cap_lines "$HANDOFF_MAX_FILE
   printf -- '- Session: %s\n' "${SID:-unknown}"
   printf -- '- Directory: %s\n' "$CWD"
   printf -- '- Branch: %s\n' "$branch"
+  [[ -n "$main_repo" ]] && printf -- '- Worktree of: %s\n' "$main_repo"
   printf -- '- Tokens in context: %s (%s)\n' "$used" "$(fmt_tokens "$used")"
   printf -- '- Transcript: %s\n' "${TRANSCRIPT:-unknown}"
   printf '\n## Working tree\n\n'

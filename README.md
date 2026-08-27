@@ -120,6 +120,17 @@ would have caused silent bugs.
 - **`SessionStart` reports `source` as `startup`, `resume`, `clear` or `compact`.**
   The `compact` value is what closes the loop after a compaction.
 
+## Worktrees
+
+A git worktree gets its own note directory, keyed by its own path. That is
+deliberate: parallel worktrees are parallel work, and pooling their handoffs would
+let a note from one line of work make another look freshly handed off. The
+mechanical note records `Worktree of: <main repo>` so a note is still identifiable
+once the worktree is gone.
+
+Consequence worth knowing: a session running inside `<repo>/.worktrees/feature-x`
+writes to `.../feature-x-<hash>/`, not to a directory named after the repo.
+
 ## Limitations
 
 - The token count comes from the newest `usage` record in the transcript. Very early

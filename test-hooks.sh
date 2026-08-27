@@ -60,6 +60,15 @@ t "name carries epoch and tokens" "81596" \
 t "name marks it as auto"   "yes"    "$( [[ "$(basename "$NOTE")" == *-auto-* ]] && echo yes || echo no )"
 t "latest.md points at it"  "yes"    "$( [[ -f "$(dirname "$NOTE")/latest.md" ]] && echo yes || echo no )"
 
+echo "── PreCompact records the main repo when the cwd is a worktree"
+WT="$TMP/wt"; git -C "$PROJ" worktree add -q -b side "$WT" 2>/dev/null
+out="$(payload PreCompact 'trigger="auto"' | sed "s|\"cwd\": \"$PROJ\"|\"cwd\": \"$WT\"|" | bash hooks/pre-compact.sh)"
+WNOTE="$(ls "$HANDOFF_DIR"/wt-*/[0-9]*.md 2>/dev/null | head -1)"
+wbody="$(cat "$WNOTE" 2>/dev/null)"
+has "names the worktree branch" "side"        "$wbody"
+has "names the main repo"       "Worktree of" "$wbody"
+has "gives the repo path"       "demo"        "$wbody"
+
 echo "── PreCompact never breaks compaction"
 t "garbage stdin exits 0"   "0"  "$(echo 'not json' | bash hooks/pre-compact.sh >/dev/null 2>&1; echo $?)"
 t "empty stdin exits 0"     "0"  "$(printf '' | bash hooks/pre-compact.sh >/dev/null 2>&1; echo $?)"
@@ -91,6 +100,7 @@ out="$(payload Stop 'stop_hook_active=false' 'last_assistant_message="did the th
 t "blocks once"  "block"  "$(printf '%s' "$out" | field decision)"
 has "names the skill"   "compact-handoff"  "$(printf '%s' "$out" | field reason)"
 has "names the target"  "$HANDOFF_DIR"     "$(printf '%s' "$out" | field reason)"
+has "says it is not a failure" "not a failure"  "$(printf '%s' "$out" | field reason)"
 
 t "silent when stop_hook_active" "" \
   "$(payload Stop 'stop_hook_active=true' | bash hooks/turn-end.sh)"
