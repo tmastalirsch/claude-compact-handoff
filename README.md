@@ -133,6 +133,9 @@ writes to `.../feature-x-<hash>/`, not to a directory named after the repo.
 
 ## Limitations
 
+- **Claude Code labels every Stop hook message as `Stop hook error`**, a deliberate
+  request included. Nothing is broken. The request says so in its own first sentence,
+  because the label cannot be changed from a hook.
 - The token count comes from the newest `usage` record in the transcript. Very early
   in a session there may be none yet, in which case the context-gated hooks stay
   quiet — the next turn catches up.
