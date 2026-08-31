@@ -11,9 +11,12 @@ parsed="$(read_payload)" || exit 0
 [[ -n "$parsed" ]] || exit 0
 { read -r SID; read -r CWD; read -r TRANSCRIPT; } <<< "$parsed"
 
+SLUG="$(slug_for "$CWD")"
+record_session_slug "$SID" "$SLUG"
+
 used="$(used_tokens_from_transcript "$TRANSCRIPT")"
 [[ -n "$used" ]] || exit 0
-dir="$HANDOFF_DIR/$(slug_for "$CWD")"
+dir="$HANDOFF_DIR/$SLUG"
 note="$(newest_note "$dir" agent)"
 note_ts=""; note_used=""
 [[ -n "$note" ]] && read -r note_ts note_used <<< "$(parse_note_name "$note")"

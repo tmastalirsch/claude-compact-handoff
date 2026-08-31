@@ -94,6 +94,18 @@ printf 'a fresh agent note\n' > "$SLUGDIR/$(date +%s)-agent-81000.md"
 t "quiet when a fresh agent note exists" "" \
   "$(payload UserPromptSubmit | bash hooks/prompt-check.sh)"
 
+echo "── UserPromptSubmit records where this session's notes live"
+# Consumers that know only the session id cannot derive the directory: the status
+# line reports the git root, this hook sees the cwd, and in a worktree they differ.
+rm -rf "$HANDOFF_DIR"
+payload UserPromptSubmit | bash hooks/prompt-check.sh >/dev/null 2>&1
+t "pointer written"  "$(bash -c "source $ROOT/lib/handoff.sh; slug_for '$PROJ'")" \
+  "$(cat "$HANDOFF_DIR/.by-session/sess-1" 2>/dev/null)"
+t "pointer written even below the threshold" "yes" \
+  "$(rm -rf "$HANDOFF_DIR"; HANDOFF_TOKEN_THRESHOLD=900000 payload UserPromptSubmit \
+     | HANDOFF_TOKEN_THRESHOLD=900000 bash hooks/prompt-check.sh >/dev/null 2>&1; \
+     [[ -f "$HANDOFF_DIR/.by-session/sess-1" ]] && echo yes || echo no)"
+
 echo "── Stop: ask at the turn boundary, never in a loop"
 rm -rf "$HANDOFF_DIR"
 out="$(payload Stop 'stop_hook_active=false' 'last_assistant_message="did the thing"' | bash hooks/turn-end.sh)"

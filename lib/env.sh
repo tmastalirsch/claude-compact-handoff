@@ -46,6 +46,18 @@ import json, sys
 print(json.dumps({"decision": "block", "reason": sys.argv[1]}))' "$1"
 }
 
+# record_session_slug <session_id> <slug> — pointer from a session id to its
+# handoff directory name. Consumers that know only the session id cannot derive
+# it: the status line reports the git root, while hooks see the actual cwd, and
+# in a git worktree those are different directories.
+record_session_slug() {
+  local sid="$1" slug="$2"
+  [[ -n "$sid" && -n "$slug" ]] || return 0
+  mkdir -p "$HANDOFF_DIR/.by-session" 2>/dev/null || return 0
+  printf '%s' "$slug" > "$HANDOFF_DIR/.by-session/$sid" 2>/dev/null
+  return 0
+}
+
 # newest_note <dir> <auto|agent|any> — path of the newest matching note.
 newest_note() {
   local dir="$1" kind="${2:-any}" pat
